@@ -1,0 +1,73 @@
+import { expect, test } from '@playwright/test';
+
+async function openSettings(page) {
+  await page.getByTestId('settings-button').click();
+  await expect(page.getByTestId('settings-drawer')).toHaveClass(/open/);
+}
+
+async function closeSettings(page) {
+  await page.getByRole('button', { name: 'Close settings' }).click();
+  await expect(page.getByTestId('settings-drawer')).not.toHaveClass(/open/);
+}
+
+test.describe('Ember guest app', () => {
+  test('first theme flow and mobile layout work', async ({ page, isMobile }) => {
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: /Hungry/i })).toBeVisible();
+    await page.getByRole('button', { name: /See the full menu/i }).click();
+    await expect(page.getByRole('heading', { name: /Tonight's menu/i })).toBeVisible();
+
+    await page.getByPlaceholder('Search dishes...').fill('ribeye');
+    await expect(page.getByRole('heading', { name: 'Dry-aged ribeye' })).toBeVisible();
+    await page.getByRole('button', { name: /Dry-aged ribeye/i }).first().click();
+    await expect(page.getByRole('heading', { name: 'Dry-aged ribeye' })).toBeVisible();
+    await page.getByRole('button', { name: /Add to order/i }).click();
+    await page.getByRole('button', { name: /View order/i }).click();
+    await expect(page.getByRole('heading', { name: 'Your order' })).toBeVisible();
+    await page.getByRole('button', { name: /Send to the kitchen/i }).click();
+    await expect(page.getByRole('heading', { name: 'Order sent' })).toBeVisible();
+    await page.getByRole('button', { name: /Track my order/i }).click();
+    await expect(page.getByRole('heading', { name: 'Your orders' })).toBeVisible();
+
+    if (isMobile) {
+      await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
+    }
+  });
+
+  test('theme switching persists across navigation and refresh', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: /See the full menu/i }).click();
+    await openSettings(page);
+    await page.getByTestId('theme-option-ember-2').click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'ember-2');
+    await closeSettings(page);
+
+    await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'Help' }).click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'ember-2');
+    await page.reload();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'ember-2');
+  });
+
+  test('theme switching preserves form state and route', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: /Call a server/i }).click();
+    await expect(page.getByRole('heading', { name: /How can we help/i })).toBeVisible();
+    await page.getByTestId('request-note').fill('Sparkling water for the table');
+    await openSettings(page);
+    await page.getByTestId('theme-option-ember-4').click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'ember-4');
+    await expect(page.getByRole('heading', { name: /How can we help/i })).toBeVisible();
+    await expect(page.getByTestId('request-note')).toHaveValue('Sparkling water for the table');
+  });
+
+  test('all seven themes can be applied', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: /See the full menu/i }).click();
+    await openSettings(page);
+    for (let index = 1; index <= 7; index += 1) {
+      const themeId = `ember-${index}`;
+      await page.getByTestId(`theme-option-${themeId}`).click();
+      await expect(page.locator('html')).toHaveAttribute('data-theme', themeId);
+    }
+  });
+});
