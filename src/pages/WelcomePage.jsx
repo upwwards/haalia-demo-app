@@ -18,7 +18,12 @@ export function WelcomePage({ picks, onGoHelp, onGoMenu, onOpenItem, tableLabel,
         <div className="pick-list">
           {picks.map((pick) => (
             <Card key={pick.id} as="button" className="pick-card" onClick={() => onOpenItem(pick.id)}>
-              <div className="thumb" style={{ background: tintByCategory[pick.cat] }}>{pick.name[0]}</div>
+              <div
+                className={pick.image ? 'thumb image-thumb' : 'thumb'}
+                style={pick.image ? { backgroundImage: `url(${pick.image})` } : { background: tintByCategory[pick.cat] }}
+              >
+                <span>{pick.name[0]}</span>
+              </div>
               <span>
                 <strong>{pick.name}</strong>
                 <small>{categoryNames[pick.cat] || 'Dish'} · {pick.hasVariants ? 'from ' : ''}{money(pick.price)}</small>

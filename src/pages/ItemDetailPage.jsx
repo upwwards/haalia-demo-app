@@ -1,12 +1,13 @@
 import { Badge } from '../components/common/Badge.jsx';
 import { Button } from '../components/common/Button.jsx';
 import { Icon } from '../icons/Icon.jsx';
-import { menuItems, money, tintByCategory } from '../data/menu.js';
+import { money, tintByCategory } from '../data/menu.js';
 
 export function ItemDetailPage({
   categoryName,
   detail,
   item,
+  menuItems,
   modOptions,
   mods,
   onAdd,
@@ -33,7 +34,10 @@ export function ItemDetailPage({
         <p className="overline">{categoryName} · {item.veg ? 'Vegetarian' : "Chef's selection"}</p>
       </div>
       <div className="scroll-area detail-scroll">
-        <div className="detail-hero" style={{ background: tintByCategory[item.cat] }}>
+        <div
+          className={item.image ? 'detail-hero image-detail-hero' : 'detail-hero'}
+          style={item.image ? { backgroundImage: `url(${item.image})` } : { background: tintByCategory[item.cat] }}
+        >
           <span>{item.name[0]}</span>
           <div className="floating-tags">
             {tags.includes('chef') ? <Badge tone="accent">Chef's</Badge> : null}
@@ -97,7 +101,12 @@ export function ItemDetailPage({
         <div className="pair-grid">
           {pairs.map((pair) => (
             <button key={pair.id} type="button" className="pair-card" onClick={() => onOpenPair(pair.id)}>
-              <span className="thumb" style={{ background: tintByCategory[pair.cat] }}>{pair.name[0]}</span>
+              <span
+                className={pair.image ? 'thumb image-thumb' : 'thumb'}
+                style={pair.image ? { backgroundImage: `url(${pair.image})` } : { background: tintByCategory[pair.cat] }}
+              >
+                <span>{pair.name[0]}</span>
+              </span>
               <strong>{pair.name}<small>{pair.hasVariants ? 'from ' : ''}{money(pair.price)}</small></strong>
             </button>
           ))}

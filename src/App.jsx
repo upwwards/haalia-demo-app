@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeProvider } from './context/ThemeContext.jsx';
+import { fetchMenu } from './api/menuApi.js';
 import { AppShell } from './components/layout/AppShell.jsx';
 import { ArViewer } from './pages/ArViewer.jsx';
 import { CartPage } from './pages/CartPage.jsx';
@@ -34,6 +35,9 @@ function defaultMods(item) {
 }
 
 function AppContent() {
+  const [apiMenuItems, setApiMenuItems] = useState([]);
+  const [apiItemDetails, setApiItemDetails] = useState({});
+  const [menuApiFailed, setMenuApiFailed] = useState(false);
   const [screen, setScreen] = useState('welcome');
   const [cat, setCat] = useState('all');
   const [search, setSearch] = useState('');
@@ -54,11 +58,34 @@ function AppContent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const toastTimer = useRef(null);
 
+  const menu = useMemo(() => (apiMenuItems.length ? apiMenuItems : menuItems), [apiMenuItems]);
+  const details = useMemo(
+    () => (apiMenuItems.length ? apiItemDetails : itemDetails),
+    [apiItemDetails, apiMenuItems.length],
+  );
+
   useEffect(() => {
     const timer = setInterval(() => {
       setOrders((current) => current.map((order) => (order.step < 4 ? { ...order, step: order.step + 1 } : order)));
     }, 5200);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchMenu({ limit: 20, signal: controller.signal })
+      .then((next) => {
+        setApiMenuItems(next.menuItems);
+        setApiItemDetails(next.itemDetails);
+        setMenuApiFailed(false);
+      })
+      .catch((error) => {
+        if (error.name !== 'AbortError') {
+          setMenuApiFailed(true);
+          console.warn(error);
+        }
+      });
+    return () => controller.abort();
   }, []);
 
   function flash(text) {
@@ -74,7 +101,7 @@ function AppContent() {
   }
 
   function openItem(id) {
-    const item = menuItems.find((entry) => entry.id === id);
+    const item = menu.find((entry) => entry.id === id);
     if (!item) return;
     setSelectedId(id);
     setQty(1);
@@ -88,7 +115,7 @@ function AppContent() {
   }
 
   function addSimple(id) {
-    const item = menuItems.find((entry) => entry.id === id);
+    const item = menu.find((entry) => entry.id === id);
     if (!item) return;
     const key = `${id}|||`;
     setCart((current) => {
@@ -195,7 +222,7 @@ function AppContent() {
   }
 
   function addToOrder() {
-    const item = menuItems.find((entry) => entry.id === selectedId);
+    const item = menu.find((entry) => entry.id === selectedId);
     if (!item) return;
     const selectedVariant = item.hasVariants ? item.variants.find((entry) => entry.id === variant) || item.variants[0] : null;
     const options = modOptions(item, mods);
@@ -309,21 +336,21 @@ function AppContent() {
     setConfirm(false);
   }
 
-  const selectedItem = menuItems.find((entry) => entry.id === selectedId) || null;
+  const selectedItem = menu.find((entry) => entry.id === selectedId) || null;
   const cartCount = cart.reduce((sum, line) => sum + line.qty, 0);
   const cartTotal = cart.reduce((sum, line) => sum + line.unit * line.qty, 0);
   const hasLive = orders.some((order) => order.step < 4);
 
   const computed = useMemo(() => {
     const query = search.trim().toLowerCase();
-    const visibleItems = menuItems
+    const visibleItems = menu
       .filter((item) => (cat === 'all' || (cat === 'veg' ? item.veg : item.cat === cat)))
       .filter((item) => !query || item.name.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query));
-    const hero = menuItems
+    const hero = menu
       .filter((item) => (item.tags || []).includes('chef') && !item.soldOut)
       .sort((a, b) => b.price - a.price)[0];
     return { visibleItems, hero };
-  }, [cat, search]);
+  }, [cat, menu, search]);
 
   const lineViews = (lines, editable) =>
     lines.map((line) => ({
@@ -423,7 +450,7 @@ function AppContent() {
     >
       {screen === 'welcome' ? (
         <WelcomePage
-          picks={menuItems.filter((item) => !item.soldOut && (item.tags || []).length).slice(0, 2)}
+          picks={menu.filter((item) => !item.soldOut && (item.tags || []).length).slice(0, 2)}
           onGoHelp={() => go('help')}
           onGoMenu={() => go('menu')}
           onOpenItem={openItem}
@@ -449,7 +476,8 @@ function AppContent() {
       {screen === 'item' && selectedItem ? (
         <ItemDetailPage
           item={selectedItem}
-          detail={itemDetails[selectedItem.id] || {}}
+          detail={details[selectedItem.id] || {}}
+          menuItems={menu}
           categoryName={categoryNames[selectedItem.cat] || 'Dish'}
           qty={qty}
           setQty={setQty}
@@ -509,6 +537,7 @@ function AppContent() {
         onPlace={() => flash('AR placement opens on a real device')}
       />
       {toast ? <div className="toast" role="status">{toast}</div> : null}
+      {menuApiFailed ? <div className="api-note" role="status">Using fallback menu</div> : null}
     </AppShell>
   );
 }

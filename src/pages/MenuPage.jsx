@@ -2,6 +2,22 @@ import { Badge } from '../components/common/Badge.jsx';
 import { Icon } from '../icons/Icon.jsx';
 import { money, tintByCategory } from '../data/menu.js';
 
+function DishThumb({ item, className = '', children }) {
+  if (item.image) {
+    return (
+      <span className={`thumb image-thumb ${className}`.trim()} style={{ backgroundImage: `url(${item.image})` }}>
+        <span>{item.name[0]}</span>
+      </span>
+    );
+  }
+
+  return (
+    <span className={`thumb ${className}`.trim()} style={{ background: tintByCategory[item.cat] }}>
+      {children || item.name[0]}
+    </span>
+  );
+}
+
 function MenuItem({ item, itemActions }) {
   const qty = itemActions.qtyFor(item.id);
   const configurable = Boolean(item.hasVariants || (item.modifiers && item.modifiers.length));
@@ -25,8 +41,8 @@ function MenuItem({ item, itemActions }) {
         </div>
       </button>
       <div className="dish-art">
-        <button type="button" className="thumb dish-thumb" style={{ background: tintByCategory[item.cat] }} onClick={() => itemActions.openItem(item.id)}>
-          {item.name[0]}
+        <button type="button" className={item.image ? 'thumb dish-thumb image-thumb' : 'thumb dish-thumb'} style={item.image ? { backgroundImage: `url(${item.image})` } : { background: tintByCategory[item.cat] }} onClick={() => itemActions.openItem(item.id)}>
+          <span>{item.name[0]}</span>
         </button>
         {item.model ? (
           <button type="button" className="ar-chip" aria-label="View in 3D AR" onClick={() => itemActions.openAr(item.id)}>
@@ -102,7 +118,7 @@ export function MenuPage({
               <strong>{hero.name}</strong>
               <small>{money(hero.price)} · {hero.time} min</small>
             </span>
-            <b className="thumb" style={{ background: tintByCategory[hero.cat] }}>{hero.name[0]}</b>
+            <DishThumb item={hero} />
           </button>
         ) : null}
         {items.map((item) => (

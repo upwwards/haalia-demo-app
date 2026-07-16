@@ -2,6 +2,7 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -28,6 +29,9 @@ textarea {
 
 button {
   transition: transform 120ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
 button:active {
@@ -342,6 +346,28 @@ textarea:focus-visible {
   justify-content: center;
   color: var(--thumb-text);
   font-weight: 800;
+}
+
+.thumb > span {
+  position: relative;
+  z-index: 1;
+}
+
+.image-thumb {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: transparent;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.18));
+  pointer-events: none;
 }
 
 .sidebar {
@@ -816,7 +842,7 @@ textarea:focus-visible {
   line-height: 1.45;
   font-size: 12.5px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1014,11 +1040,25 @@ textarea:focus-visible {
   height: 200px;
   border-radius: var(--detail-radius);
   position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   border: var(--detail-hero-border, 0);
   box-shadow: var(--thumb-shadow, none);
+}
+
+.image-detail-hero {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.image-detail-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.26));
 }
 
 .detail-hero > span {
@@ -1027,12 +1067,17 @@ textarea:focus-visible {
   color: var(--thumb-text-large);
 }
 
+.image-detail-hero > span {
+  display: none;
+}
+
 .floating-tags {
   position: absolute;
   top: 12px;
   left: 12px;
   display: flex;
   gap: 6px;
+  z-index: 1;
 }
 
 .floating-tags .badge {
@@ -1044,6 +1089,7 @@ textarea:focus-visible {
   position: absolute;
   left: 12px;
   bottom: 12px;
+  z-index: 1;
 }
 
 .detail-title {
@@ -1805,6 +1851,22 @@ textarea:focus-visible {
   font-weight: 800;
   white-space: nowrap;
   animation: toast-in 300ms ease-out;
+}
+
+.api-note {
+  position: absolute;
+  left: 50%;
+  bottom: 78px;
+  z-index: 75;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: var(--dark-action);
+  color: var(--on-dark-action);
+  box-shadow: var(--floating-shadow);
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .drawer-scrim {

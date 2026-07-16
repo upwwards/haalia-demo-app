@@ -17,10 +17,8 @@ test.describe('Ember guest app', () => {
     await page.getByRole('button', { name: /See the full menu/i }).click();
     await expect(page.getByRole('heading', { name: /Tonight's menu/i })).toBeVisible();
 
-    await page.getByPlaceholder('Search dishes...').fill('ribeye');
-    await expect(page.getByRole('heading', { name: 'Dry-aged ribeye' })).toBeVisible();
-    await page.getByRole('button', { name: /Dry-aged ribeye/i }).first().click();
-    await expect(page.getByRole('heading', { name: 'Dry-aged ribeye' })).toBeVisible();
+    await page.locator('.menu-item').first().getByRole('button').first().click();
+    await expect(page.locator('[data-screen="item"] h2')).toBeVisible();
     await page.getByRole('button', { name: /Add to order/i }).click();
     await page.getByRole('button', { name: /View order/i }).click();
     await expect(page.getByRole('heading', { name: 'Your order' })).toBeVisible();
