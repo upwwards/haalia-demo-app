@@ -58,13 +58,17 @@ test.describe('Ember guest app', () => {
     await expect(page.getByTestId('request-note')).toHaveValue('Sparkling water for the table');
   });
 
-  test('menu search opens a dedicated mobile-style search page', async ({ page }) => {
+  test('menu search opens a dedicated mobile-style search page', async ({ page, isMobile }) => {
     await page.goto('/');
     await page.getByRole('button', { name: /See the full menu/i }).click();
 
     await page.getByRole('button', { name: 'Search menu' }).click();
     await expect(page.locator('[data-screen="search"]')).toBeVisible();
-    await expect(page.getByTestId('search-page-input')).toBeFocused();
+    if (isMobile) {
+      await expect(page.getByTestId('search-page-input')).not.toBeFocused();
+    } else {
+      await expect(page.getByTestId('search-page-input')).toBeFocused();
+    }
 
     await page.getByTestId('search-page-input').fill('chicken');
     await expect(page.locator('.search-result').first()).toBeVisible();

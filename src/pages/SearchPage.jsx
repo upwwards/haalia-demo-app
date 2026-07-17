@@ -30,7 +30,11 @@ export function SearchPage({ items, query, setQuery, onBack, onOpenItem }) {
   const cleanQuery = query.trim().toLowerCase();
 
   useEffect(() => {
-    window.setTimeout(() => inputRef.current?.focus(), 90);
+    const shouldAutoFocus = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!shouldAutoFocus) return undefined;
+
+    const timer = window.setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 90);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const results = useMemo(() => {
