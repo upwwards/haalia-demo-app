@@ -61,12 +61,48 @@ function MenuItem({ item, itemActions }) {
   );
 }
 
+function MenuItemSkeleton() {
+  return (
+    <article className="menu-item menu-item-skeleton skeleton-card" aria-hidden="true">
+      <div className="menu-item-copy">
+        <div className="tag-row">
+          <span className="skeleton-pill" />
+          <span className="skeleton-pill skeleton-pill-short" />
+        </div>
+        <span className="skeleton-line skeleton-line-title" />
+        <span className="skeleton-line skeleton-line-wide" />
+        <div className="meta-line">
+          <span className="skeleton-line skeleton-line-price" />
+          <span className="skeleton-line skeleton-line-time" />
+        </div>
+      </div>
+      <div className="dish-art">
+        <span className="dish-thumb skeleton-block" />
+      </div>
+    </article>
+  );
+}
+
+function HeroDishSkeleton() {
+  return (
+    <div className="hero-dish hero-dish-skeleton skeleton-card" aria-hidden="true">
+      <div className="hero-dish-skeleton-copy">
+        <span className="skeleton-line skeleton-line-kicker" />
+        <span className="skeleton-line skeleton-line-hero" />
+        <span className="skeleton-line skeleton-line-price" />
+      </div>
+      <span className="thumb skeleton-block" />
+    </div>
+  );
+}
+
 export function MenuPage({
   activeCategory,
   cartCount,
   cartTotalLabel,
   categories,
   hero,
+  isLoading = false,
   items,
   itemActions,
   onCategory,
@@ -108,8 +144,8 @@ export function MenuPage({
           ))}
         </div>
       </div>
-      <div className="scroll-area menu-list" onScroll={handleMenuScroll}>
-        {hero ? (
+      <div className="scroll-area menu-list" onScroll={handleMenuScroll} aria-busy={isLoading}>
+        {isLoading ? <HeroDishSkeleton /> : hero ? (
           <button type="button" className="hero-dish" onClick={() => itemActions.openItem(hero.id)}>
             <span>
               <em className="overline">Chef's pick tonight</em>
@@ -119,10 +155,19 @@ export function MenuPage({
             <DishThumb item={hero} />
           </button>
         ) : null}
-        {items.map((item) => (
-          <MenuItem key={item.id} item={item} itemActions={itemActions} />
-        ))}
-        {!items.length ? <div className="empty-state">Nothing matches that search.</div> : null}
+        {isLoading ? (
+          <>
+            <MenuItemSkeleton />
+            <MenuItemSkeleton />
+            <MenuItemSkeleton />
+            <MenuItemSkeleton />
+          </>
+        ) : (
+          items.map((item) => (
+            <MenuItem key={item.id} item={item} itemActions={itemActions} />
+          ))
+        )}
+        {!isLoading && !items.length ? <div className="empty-state">Nothing matches that search.</div> : null}
       </div>
       {cartCount > 0 ? (
         <button type="button" className="cart-bar" onClick={onGoCart}>

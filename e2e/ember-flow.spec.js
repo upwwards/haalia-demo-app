@@ -3,6 +3,11 @@ import { DEFAULT_THEME_ID, emberThemes } from '../src/themes/themes.js';
 
 const themeIds = emberThemes.map((theme) => theme.id);
 
+async function gotoUnlocked(page) {
+  await page.addInitScript(() => localStorage.setItem('ember-pin-unlocked', 'true'));
+  await page.goto('/');
+}
+
 async function openSettings(page) {
   await page.getByTestId('settings-button').click();
   await expect(page.getByTestId('settings-drawer')).toHaveClass(/open/);
@@ -14,8 +19,21 @@ async function closeSettings(page) {
 }
 
 test.describe('Ember guest app', () => {
-  test('first theme flow and mobile layout work', async ({ page, isMobile }) => {
+  test('PIN gate unlocks with the table code and persists', async ({ page }) => {
     await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'Enter PIN' })).toBeVisible();
+
+    for (const digit of ['9', '0', '4', '8']) {
+      await page.getByRole('button', { name: digit }).click();
+    }
+
+    await expect(page.getByRole('heading', { name: /Hungry/i })).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole('heading', { name: /Hungry/i })).toBeVisible();
+  });
+
+  test('first theme flow and mobile layout work', async ({ page, isMobile }) => {
+    await gotoUnlocked(page);
     await expect(page.getByRole('heading', { name: /Hungry/i })).toBeVisible();
     await page.getByRole('button', { name: /See the full menu/i }).click();
     await expect(page.getByRole('heading', { name: /Tonight's menu/i })).toBeVisible();
@@ -36,7 +54,7 @@ test.describe('Ember guest app', () => {
   });
 
   test('theme switching persists across navigation and refresh', async ({ page }) => {
-    await page.goto('/');
+    await gotoUnlocked(page);
     await page.getByRole('button', { name: /See the full menu/i }).click();
     await openSettings(page);
     await page.getByTestId('theme-option-ember-crystal').click();
@@ -50,14 +68,14 @@ test.describe('Ember guest app', () => {
   });
 
   test('invalid stored theme falls back to the default theme', async ({ page }) => {
-    await page.goto('/');
+    await gotoUnlocked(page);
     await page.evaluate(() => localStorage.setItem('ember-theme', 'not-a-real-theme'));
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-theme', DEFAULT_THEME_ID);
   });
 
   test('theme switching preserves search state and route', async ({ page }) => {
-    await page.goto('/');
+    await gotoUnlocked(page);
     await page.getByRole('button', { name: /See the full menu/i }).click();
     await page.getByRole('button', { name: 'Search menu' }).click();
     await page.getByTestId('search-page-input').fill('chicken');
@@ -72,7 +90,7 @@ test.describe('Ember guest app', () => {
   });
 
   test('menu search opens a dedicated mobile-style search page', async ({ page, isMobile }) => {
-    await page.goto('/');
+    await gotoUnlocked(page);
     await page.getByRole('button', { name: /See the full menu/i }).click();
 
     await page.getByRole('button', { name: 'Search menu' }).click();
@@ -94,7 +112,7 @@ test.describe('Ember guest app', () => {
   });
 
   test('no internet page appears without resetting the current screen', async ({ page, context }) => {
-    await page.goto('/');
+    await gotoUnlocked(page);
     await page.getByRole('button', { name: /See the full menu/i }).click();
     await expect(page.getByRole('heading', { name: /Tonight's menu/i })).toBeVisible();
 
@@ -109,7 +127,7 @@ test.describe('Ember guest app', () => {
   });
 
   test('all theme options are visible and can be applied', async ({ page }) => {
-    await page.goto('/');
+    await gotoUnlocked(page);
     await page.getByRole('button', { name: /See the full menu/i }).click();
     await openSettings(page);
     for (const themeId of themeIds) {
@@ -122,7 +140,7 @@ test.describe('Ember guest app', () => {
 
   test('theme selector stays inside the mobile viewport', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 720 });
-    await page.goto('/');
+    await gotoUnlocked(page);
     await page.getByRole('button', { name: /See the full menu/i }).click();
     await openSettings(page);
 
@@ -141,7 +159,7 @@ test.describe('Ember guest app', () => {
 
     for (const width of widths) {
       await page.setViewportSize({ width, height: 800 });
-      await page.goto('/');
+      await gotoUnlocked(page);
       await page.getByRole('button', { name: /See the full menu/i }).click();
       await openSettings(page);
 
@@ -155,7 +173,7 @@ test.describe('Ember guest app', () => {
   });
 
   test('theme visual smoke screenshots', async ({ page }, testInfo) => {
-    await page.goto('/');
+    await gotoUnlocked(page);
     await page.getByRole('button', { name: /See the full menu/i }).click();
     await openSettings(page);
 

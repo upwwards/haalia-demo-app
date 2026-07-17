@@ -25,7 +25,20 @@ function matchItem(item, query) {
   return haystack.includes(query);
 }
 
-export function SearchPage({ items, query, setQuery, onBack, onOpenItem }) {
+function SearchResultSkeleton() {
+  return (
+    <div className="search-result search-result-skeleton skeleton-card" aria-hidden="true">
+      <span className="search-result-thumb skeleton-block" />
+      <span className="search-result-copy">
+        <span className="skeleton-line skeleton-line-title" />
+        <span className="skeleton-line skeleton-line-wide" />
+        <span className="skeleton-line skeleton-line-price" />
+      </span>
+    </div>
+  );
+}
+
+export function SearchPage({ isLoading = false, items, query, setQuery, onBack, onOpenItem }) {
   const inputRef = useRef(null);
   const cleanQuery = query.trim().toLowerCase();
 
@@ -87,11 +100,19 @@ export function SearchPage({ items, query, setQuery, onBack, onOpenItem }) {
         ) : null}
 
         <div className="search-result-meta">
-          <span>{cleanQuery ? `${results.length} ${results.length === 1 ? 'result' : 'results'}` : 'Recommended now'}</span>
+          <span>{isLoading ? 'Loading menu' : cleanQuery ? `${results.length} ${results.length === 1 ? 'result' : 'results'}` : 'Recommended now'}</span>
         </div>
 
-        <div className="search-results">
-          {results.map((item) => (
+        <div className="search-results" aria-busy={isLoading}>
+          {isLoading ? (
+            <>
+              <SearchResultSkeleton />
+              <SearchResultSkeleton />
+              <SearchResultSkeleton />
+              <SearchResultSkeleton />
+            </>
+          ) : (
+            results.map((item) => (
             <button
               key={item.id}
               type="button"
@@ -107,10 +128,11 @@ export function SearchPage({ items, query, setQuery, onBack, onOpenItem }) {
                 </em>
               </span>
             </button>
-          ))}
+            ))
+          )}
         </div>
 
-        {!results.length ? (
+        {!isLoading && !results.length ? (
           <div className="empty-state search-empty">
             <strong>No matching dishes</strong>
             Try a dish name, ingredient, or a category like mains.

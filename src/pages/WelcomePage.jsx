@@ -3,7 +3,20 @@ import { Card } from '../components/common/Card.jsx';
 import { Icon } from '../icons/Icon.jsx';
 import { categoryNames, money, tintByCategory } from '../data/menu.js';
 
-export function WelcomePage({ picks, onGoHelp, onGoMenu, onOpenItem, tableLabel, venueName }) {
+function WelcomePickSkeleton() {
+  return (
+    <div className="card pick-card pick-card-skeleton skeleton-card" aria-hidden="true">
+      <span className="skeleton-block skeleton-thumb" />
+      <span className="skeleton-copy">
+        <span className="skeleton-line skeleton-line-strong" />
+        <span className="skeleton-line skeleton-line-short" />
+      </span>
+      <span className="skeleton-pill" />
+    </div>
+  );
+}
+
+export function WelcomePage({ isLoading = false, picks, onGoHelp, onGoMenu, onOpenItem, tableLabel, venueName }) {
   return (
     <section className="screen welcome-screen" data-screen="welcome">
       <div className="welcome-top">
@@ -15,8 +28,14 @@ export function WelcomePage({ picks, onGoHelp, onGoMenu, onOpenItem, tableLabel,
         <h1>Hungry?<br />The fire's<br />ready<span>.</span></h1>
         <p className="lead">Order from your phone, track the kitchen live, pay when you're done.</p>
         <p className="overline muted">Tonight's picks</p>
-        <div className="pick-list">
-          {picks.map((pick) => (
+        <div className="pick-list" aria-busy={isLoading}>
+          {isLoading ? (
+            <>
+              <WelcomePickSkeleton />
+              <WelcomePickSkeleton />
+            </>
+          ) : (
+            picks.map((pick) => (
             <Card key={pick.id} as="button" className="pick-card" onClick={() => onOpenItem(pick.id)}>
               <div
                 className={pick.image ? 'thumb image-thumb' : 'thumb'}
@@ -30,7 +49,8 @@ export function WelcomePage({ picks, onGoHelp, onGoMenu, onOpenItem, tableLabel,
               </span>
               <em>{(pick.tags || []).includes('chef') ? "Chef's" : pick.veg ? 'Veg' : 'Popular'}</em>
             </Card>
-          ))}
+            ))
+          )}
         </div>
       </div>
       <div className="welcome-actions">

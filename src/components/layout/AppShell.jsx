@@ -8,6 +8,7 @@ export function AppShell({
   cartCount,
   children,
   hasLive,
+  isLocked = false,
   menuChromeCompact,
   onNavigate,
   onSettings,
@@ -16,13 +17,13 @@ export function AppShell({
   tableLabel,
   venueName,
 }) {
-  const showNav = ['menu', 'track', 'help'].includes(activeScreen);
+  const showNav = !isLocked && ['menu', 'track', 'help'].includes(activeScreen);
 
   return (
-    <div className="app-frame">
-      <Sidebar active={activeScreen} cartCount={cartCount} hasLive={hasLive} onNavigate={onNavigate} />
+    <div className={`app-frame ${isLocked ? 'locked' : ''}`.trim()}>
+      {!isLocked ? <Sidebar active={activeScreen} cartCount={cartCount} hasLive={hasLive} onNavigate={onNavigate} /> : null}
       <main className={`phone-shell ${showNav ? 'has-bottom-nav' : ''} ${menuChromeCompact ? 'menu-chrome-compact' : ''}`.trim()}>
-        {activeScreen === 'menu' ? (
+        {!isLocked && activeScreen === 'menu' ? (
           <Header
             showNotifications={!showNav}
             venueName={venueName}
@@ -37,7 +38,7 @@ export function AppShell({
             <MobileNavigation active={activeScreen} hasLive={hasLive} onNavigate={onNavigate} />
           </div>
         ) : null}
-        <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+        {!isLocked ? <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} /> : null}
       </main>
     </div>
   );

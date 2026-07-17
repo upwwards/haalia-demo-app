@@ -46,6 +46,8 @@
   --transition-normal: 260ms ease;
   --image-scrim: linear-gradient(180deg, color-mix(in srgb, var(--text) 4%, transparent), color-mix(in srgb, var(--text) 18%, transparent));
   --image-scrim-strong: linear-gradient(180deg, color-mix(in srgb, var(--text) 8%, transparent), color-mix(in srgb, var(--text) 26%, transparent));
+  --skeleton-base: color-mix(in srgb, var(--text) 9%, var(--surface-secondary));
+  --skeleton-highlight: color-mix(in srgb, var(--on-accent) 22%, var(--surface-secondary));
   --compact-header-shadow: 0 10px 20px -18px color-mix(in srgb, var(--text) 38%, transparent);
   --search-head-shadow: 0 12px 22px -20px color-mix(in srgb, var(--text) 45%, transparent);
   --detail-back-shadow: 0 10px 22px -16px color-mix(in srgb, var(--text) 45%, transparent);
@@ -190,6 +192,15 @@ textarea:focus-visible {
   }
 }
 
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+
 .app-frame {
   min-height: 100vh;
   min-height: 100dvh;
@@ -197,6 +208,15 @@ textarea:focus-visible {
   grid-template-columns: 230px minmax(0, 1fr);
   gap: 18px;
   padding: 18px;
+}
+
+.app-frame.locked {
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+}
+
+.app-frame.locked .phone-shell {
+  width: min(100%, 430px);
 }
 
 .phone-shell {
@@ -350,6 +370,12 @@ textarea:focus-visible {
   white-space: nowrap;
 }
 
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
 .btn-md {
   min-height: 52px;
   padding: 0 24px;
@@ -385,6 +411,117 @@ textarea:focus-visible {
 .btn-text {
   background: transparent;
   color: var(--subtle);
+}
+
+.pin-screen {
+  justify-content: center;
+  padding: 24px;
+}
+
+.pin-panel {
+  display: grid;
+  gap: 22px;
+  width: min(100%, 340px);
+  margin: 0 auto;
+}
+
+.pin-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.pin-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.pin-copy h1 {
+  margin: 0;
+  font-family: var(--headline-family);
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.pin-copy .lead {
+  margin: 0;
+  max-width: 280px;
+  font-size: 13px;
+}
+
+.pin-entry {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.pin-entry span {
+  height: 54px;
+  border: var(--control-border, 1px solid var(--border));
+  border-radius: var(--input-radius);
+  background: var(--control-bg, var(--input-bg));
+  box-shadow: var(--input-shadow, none);
+  position: relative;
+}
+
+.pin-entry span::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.75);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.pin-entry span.filled::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.pin-error {
+  min-height: 18px;
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pin-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pin-keypad button {
+  min-height: 56px;
+  border: var(--control-border, 1px solid var(--border));
+  border-radius: var(--button-radius);
+  background: var(--control-bg, var(--input-bg));
+  color: var(--text);
+  box-shadow: var(--input-shadow, none);
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 850;
+}
+
+.pin-keypad button:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.pin-keypad button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.pin-keypad .pin-key-action {
+  font-size: 12px;
+  letter-spacing: 0;
 }
 
 .wide {
@@ -504,6 +641,92 @@ textarea:focus-visible {
   inset: 0;
   background: var(--image-scrim);
   pointer-events: none;
+}
+
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton-block,
+.skeleton-line,
+.skeleton-pill {
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--skeleton-highlight) 86%, transparent) 48%,
+      transparent 100%
+    ),
+    var(--skeleton-base);
+  background-size: 220% 100%, 100% 100%;
+  animation: skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+.skeleton-block,
+.skeleton-line {
+  display: block;
+}
+
+.skeleton-line {
+  height: 10px;
+  border-radius: 999px;
+}
+
+.skeleton-pill {
+  display: inline-block;
+  width: 52px;
+  height: 16px;
+  border-radius: 999px;
+}
+
+.skeleton-pill-short {
+  width: 38px;
+}
+
+.skeleton-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--thumb-radius);
+  flex: 0 0 auto;
+}
+
+.skeleton-copy {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.skeleton-line-strong,
+.skeleton-line-title {
+  width: min(78%, 160px);
+  height: 13px;
+}
+
+.skeleton-line-short {
+  width: min(54%, 110px);
+}
+
+.skeleton-line-wide {
+  width: min(92%, 280px);
+}
+
+.skeleton-line-price {
+  width: 58px;
+}
+
+.skeleton-line-time {
+  width: 44px;
+}
+
+.skeleton-line-kicker {
+  width: 96px;
+  height: 8px;
+}
+
+.skeleton-line-hero {
+  width: min(76%, 190px);
+  height: 18px;
 }
 
 .sidebar {
@@ -848,6 +1071,18 @@ textarea:focus-visible {
   text-transform: uppercase;
 }
 
+.pick-card-skeleton .skeleton-thumb,
+.pick-card-skeleton .skeleton-line,
+.pick-card-skeleton .skeleton-pill {
+  flex: 0 0 auto;
+  display: block;
+  padding: 0;
+}
+
+.pick-card-skeleton .skeleton-copy {
+  flex: 1;
+}
+
 .welcome-actions {
   display: grid;
   gap: 9px;
@@ -1059,6 +1294,25 @@ textarea:focus-visible {
   font-size: 42px;
 }
 
+.hero-dish-skeleton-copy {
+  flex: 1;
+  padding: 18px;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+}
+
+.hero-dish-skeleton .skeleton-line,
+.hero-dish-skeleton .thumb {
+  flex: 0 0 auto;
+  padding: 0;
+}
+
+.hero-dish-skeleton .thumb {
+  align-self: stretch;
+  min-height: 102px;
+}
+
 .menu-item {
   display: flex;
   align-items: stretch;
@@ -1147,6 +1401,14 @@ textarea:focus-visible {
   font-size: 30px;
   border: var(--thumb-border, 0);
   box-shadow: var(--thumb-shadow, none);
+}
+
+.menu-item-skeleton .menu-item-copy {
+  cursor: default;
+}
+
+.menu-item-skeleton .tag-row {
+  min-height: 16px;
 }
 
 .ar-chip {
@@ -1493,6 +1755,10 @@ textarea:focus-visible {
 
 .search-result.disabled {
   opacity: 0.55;
+}
+
+.search-result-skeleton {
+  cursor: default;
 }
 
 .search-result-thumb {
@@ -3227,6 +3493,10 @@ textarea:focus-visible {
     min-height: 640px;
     border-radius: 0;
     border: 0;
+  }
+
+  .app-frame.locked .phone-shell {
+    width: 100%;
   }
 }
 

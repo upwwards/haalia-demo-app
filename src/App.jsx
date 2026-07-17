@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { fetchMenu } from './api/menuApi.js';
 import { AppShell } from './components/layout/AppShell.jsx';
@@ -9,6 +9,7 @@ import { ItemDetailPage } from './pages/ItemDetailPage.jsx';
 import { MenuPage } from './pages/MenuPage.jsx';
 import { NoInternetPage } from './pages/NoInternetPage.jsx';
 import { PlacedPage } from './pages/PlacedPage.jsx';
+import { PinPage } from './pages/PinPage.jsx';
 import { SearchPage } from './pages/SearchPage.jsx';
 import { ServiceRequestPage } from './pages/ServiceRequestPage.jsx';
 import { TrackingPage } from './pages/TrackingPage.jsx';
@@ -26,6 +27,8 @@ import {
 
 const venueName = 'EMBER';
 const tableLabel = 'Table 12';
+const pinCode = '9048';
+const pinStorageKey = 'ember-pin-unlocked';
 
 function defaultMods(item) {
   const mods = {};
@@ -36,8 +39,13 @@ function defaultMods(item) {
 }
 
 function AppContent() {
+  const [isUnlocked, setIsUnlocked] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem(pinStorageKey) === 'true';
+  });
   const [apiMenuItems, setApiMenuItems] = useState([]);
   const [apiItemDetails, setApiItemDetails] = useState({});
+  const [menuLoading, setMenuLoading] = useState(true);
   const [menuApiFailed, setMenuApiFailed] = useState(false);
   const [screen, setScreen] = useState('welcome');
   const [cat, setCat] = useState('all');
@@ -63,10 +71,13 @@ function AppContent() {
   const requestCounter = useRef(0);
   const menuInteractionLocked = useRef(false);
 
-  const menu = useMemo(() => (apiMenuItems.length ? apiMenuItems : menuItems), [apiMenuItems]);
+  const menu = useMemo(() => {
+    if (apiMenuItems.length) return apiMenuItems;
+    return menuApiFailed ? menuItems : [];
+  }, [apiMenuItems, menuApiFailed]);
   const details = useMemo(
-    () => (apiMenuItems.length ? apiItemDetails : itemDetails),
-    [apiItemDetails, apiMenuItems.length],
+    () => (apiMenuItems.length ? apiItemDetails : menuApiFailed ? itemDetails : {}),
+    [apiItemDetails, apiMenuItems.length, menuApiFailed],
   );
 
   useEffect(() => {
@@ -88,6 +99,7 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
+    if (!isUnlocked) return undefined;
     const controller = new AbortController();
     fetchMenu({ limit: 20, signal: controller.signal })
       .then((next) => {
@@ -95,14 +107,24 @@ function AppContent() {
         setApiMenuItems(next.menuItems);
         setApiItemDetails(next.itemDetails);
         setMenuApiFailed(false);
+        setMenuLoading(false);
       })
       .catch((error) => {
         if (error.name !== 'AbortError') {
           setMenuApiFailed(true);
+          setMenuLoading(false);
           console.warn(error);
         }
       });
     return () => controller.abort();
+  }, [isUnlocked]);
+
+  const unlockWithPin = useCallback((candidate) => {
+    if (candidate !== pinCode) return false;
+    window.localStorage.setItem(pinStorageKey, 'true');
+    setIsUnlocked(true);
+    setScreen('welcome');
+    return true;
   }, []);
 
   function flash(text) {
@@ -468,13 +490,14 @@ function AppContent() {
     },
   };
 
-  const activeScreen = isOnline ? screen : 'offline';
+  const activeScreen = !isUnlocked ? 'pin' : isOnline ? screen : 'offline';
 
   return (
     <AppShell
       activeScreen={activeScreen}
       cartCount={cartCount}
       hasLive={hasLive}
+      isLocked={!isUnlocked}
       menuChromeCompact={isOnline && screen === 'menu' && menuChromeCompact}
       onNavigate={go}
       onSettings={() => setSettingsOpen(true)}
@@ -483,10 +506,13 @@ function AppContent() {
       tableLabel={tableLabel}
       venueName={venueName}
     >
-      {isOnline ? (
+      {!isUnlocked ? (
+        <PinPage onUnlock={unlockWithPin} tableLabel={tableLabel} venueName={venueName} />
+      ) : isOnline ? (
         <>
       {screen === 'welcome' ? (
         <WelcomePage
+          isLoading={menuLoading}
           picks={menu.filter((item) => !item.soldOut && (item.tags || []).length).slice(0, 2)}
           onGoHelp={() => go('help')}
           onGoMenu={() => go('menu')}
@@ -502,6 +528,7 @@ function AppContent() {
           categories={categories}
           activeCategory={cat}
           hero={computed.hero}
+          isLoading={menuLoading}
           items={computed.visibleItems}
           itemActions={itemActions}
           onCategory={setCat}
@@ -513,6 +540,7 @@ function AppContent() {
       ) : null}
       {screen === 'search' ? (
         <SearchPage
+          isLoading={menuLoading}
           items={menu}
           query={search}
           setQuery={setSearch}
