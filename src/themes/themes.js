@@ -41,4 +41,10 @@ export const emberThemes = [
     sourceFile: 'Ember Final v7.dc.html',
     previewColors: ['#241C14', '#EAE3D5', '#A84418', '#FFFEF5'],
   },
+  {
+    id: 'ember-crystal',
+    name: 'Crystal Glass',
+    sourceFile: 'Ember Crystal.dc.html',
+    previewColors: ['#2B2018', '#FDF8F2', '#EA580C', '#FFFFFF'],
+  },
 ];

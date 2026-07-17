@@ -1,17 +1,24 @@
+import { useState } from 'react';
 import { Button } from '../components/common/Button.jsx';
 import { Icon } from '../icons/Icon.jsx';
 
 export function TrackingPage({ confirm, noOrders, onCloseBill, onGoHelp, onGoMenu, orders }) {
+  const [topbarScrolled, setTopbarScrolled] = useState(false);
+
+  function handleScroll(event) {
+    setTopbarScrolled(event.currentTarget.scrollTop > 8);
+  }
+
   return (
     <section className="screen track-screen" data-screen="track">
-      <header className="track-topbar">
+      <header className={`track-topbar ${topbarScrolled ? 'scrolled' : ''}`}>
         <button type="button" className="track-back-button" aria-label="Back to menu" onClick={onGoMenu}>
           <Icon name="arrowLeft" size={26} strokeWidth={2.1} />
         </button>
         <h2>REORDER</h2>
         <span aria-hidden="true" />
       </header>
-      <div className="scroll-area track-list">
+      <div className="scroll-area track-list" onScroll={handleScroll}>
         {noOrders ? (
           <div className="order-empty">
             <div className="order-empty-visual" aria-hidden="true">

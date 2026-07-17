@@ -21,7 +21,7 @@ export function Header({ showNotifications = true, venueName, tableLabel, onHelp
           data-testid="settings-button"
           onClick={onSettings}
         >
-          <Icon name="paint" size={28} />
+          <Icon name="paint" size={21} />
         </button>
       </div>
     </header>

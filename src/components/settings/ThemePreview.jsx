@@ -1,9 +1,7 @@
 export function ThemePreview({ colors }) {
+  const swatch = `linear-gradient(135deg, ${colors.join(', ')})`;
+
   return (
-    <div className="theme-preview" aria-hidden="true">
-      {colors.map((color) => (
-        <span key={color} style={{ background: color }} />
-      ))}
-    </div>
+    <div className="theme-preview" aria-hidden="true" style={{ background: swatch }} />
   );
 }

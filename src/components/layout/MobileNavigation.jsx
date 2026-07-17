@@ -1,8 +1,10 @@
+import { Icon } from '../../icons/Icon.jsx';
+
 export function MobileNavigation({ active, onNavigate, hasLive }) {
   const items = [
-    { id: 'menu', label: 'Menu' },
-    { id: 'track', label: 'Orders' },
-    { id: 'help', label: 'Help' },
+    { id: 'menu', label: 'Menu', icon: 'list' },
+    { id: 'track', label: 'Orders', icon: 'clock' },
+    { id: 'help', label: 'Help', icon: 'bell' },
   ];
 
   return (
@@ -13,8 +15,10 @@ export function MobileNavigation({ active, onNavigate, hasLive }) {
           type="button"
           className={active === item.id ? 'active' : ''}
           onClick={() => onNavigate(item.id)}
+          aria-current={active === item.id ? 'page' : undefined}
         >
-          {item.label}
+          <Icon name={item.icon} size={16} />
+          <span className="mobile-nav-label">{item.label}</span>
           {item.id === 'track' && hasLive ? <span className="live-dot" /> : null}
         </button>
       ))}

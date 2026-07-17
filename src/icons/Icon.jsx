@@ -1,6 +1,12 @@
-import colorPaletteIcon from '../assets/color-palette.png';
-
 const paths = {
+  list: ['M8 6h12', 'M8 12h12', 'M8 18h12', 'M4 6h.01', 'M4 12h.01', 'M4 18h.01'],
+  palette: [
+    'M12 3a9 9 0 0 0 0 18h1.2a1.8 1.8 0 0 0 1.27-3.07 1.8 1.8 0 0 1 1.27-3.07H17a4 4 0 0 0 4-4C21 6.54 17 3 12 3z',
+    'M7.5 10.5h.01',
+    'M10 7.5h.01',
+    'M14 7.5h.01',
+    'M16.5 10.5h.01',
+  ],
   arrowRight: ['M4 12h15', 'M13 6l6 6-6 6'],
   arrowLeft: ['M20 12H5', 'M12 19l-7-7 7-7'],
   x: ['M6 6l12 12', 'M18 6L6 18'],
@@ -24,21 +30,7 @@ const paths = {
 };
 
 export function Icon({ name, size = 17, strokeWidth = 2, className = '', color = 'currentColor' }) {
-  if (name === 'paint') {
-    return (
-      <img
-        className={className}
-        width={size}
-        height={size}
-        src={colorPaletteIcon}
-        alt=""
-        aria-hidden="true"
-        draggable="false"
-        style={{ display: 'block', objectFit: 'contain' }}
-      />
-    );
-  }
-
+  const iconName = name === 'paint' ? 'palette' : name;
   return (
     <svg
       className={className}
@@ -52,7 +44,7 @@ export function Icon({ name, size = 17, strokeWidth = 2, className = '', color =
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      {(paths[name] || []).map((d) => (
+      {(paths[iconName] || []).map((d) => (
         <path key={d} d={d} />
       ))}
     </svg>

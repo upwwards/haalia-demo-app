@@ -8,13 +8,16 @@ export function SettingsDrawer({ open, onClose }) {
       <aside
         className={`settings-drawer ${open ? 'open' : ''}`}
         data-testid="settings-drawer"
+        role="dialog"
+        aria-modal="true"
         aria-hidden={!open}
         aria-label="Settings"
       >
+        <div className="drawer-handle" aria-hidden="true" />
         <div className="drawer-head">
           <div>
             <p className="overline">Settings</p>
-            <h2>Appearance</h2>
+            <h2>Choose a theme</h2>
           </div>
           <button type="button" className="icon-button" aria-label="Close settings" onClick={onClose}>
             <Icon name="x" />

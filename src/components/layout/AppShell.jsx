@@ -2,7 +2,6 @@ import { Header } from './Header.jsx';
 import { MobileNavigation } from './MobileNavigation.jsx';
 import { Sidebar } from './Sidebar.jsx';
 import { SettingsDrawer } from '../settings/SettingsDrawer.jsx';
-import { Icon } from '../../icons/Icon.jsx';
 
 export function AppShell({
   activeScreen,
@@ -36,13 +35,10 @@ export function AppShell({
         {showNav ? (
           <div className="bottom-nav-cluster">
             <MobileNavigation active={activeScreen} hasLive={hasLive} onNavigate={onNavigate} />
-            <button type="button" className="icon-button bottom-notification" aria-label="Open notifications" title="Notifications" onClick={() => onNavigate('help')}>
-              <Icon name="bell" size={20} />
-            </button>
           </div>
         ) : null}
+        <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       </main>
-      <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 }

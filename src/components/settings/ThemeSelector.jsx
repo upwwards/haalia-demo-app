@@ -22,7 +22,6 @@ export function ThemeSelector() {
             <ThemePreview colors={theme.previewColors} />
             <span>
               <strong>{theme.name}</strong>
-              <small>{theme.sourceFile}</small>
             </span>
             {selected ? <Icon name="check" size={18} /> : null}
           </button>
