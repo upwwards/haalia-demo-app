@@ -405,7 +405,7 @@ function AppContent() {
       onDec: () => decKey(line.key),
     }));
 
-  const orderViews = orders.map((order) => {
+  const orderViews = [...orders].reverse().map((order) => {
     const step = order.step;
     return {
       ...order,

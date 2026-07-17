@@ -13,7 +13,7 @@ export function MobileNavigation({ active, onNavigate, hasLive }) {
         <button
           key={item.id}
           type="button"
-          className={active === item.id ? 'active' : ''}
+          className={`${active === item.id ? 'active' : ''} ${item.id === 'track' && hasLive ? 'has-live' : ''}`.trim()}
           onClick={() => onNavigate(item.id)}
           aria-current={active === item.id ? 'page' : undefined}
         >

@@ -15,7 +15,7 @@ export function TrackingPage({ confirm, noOrders, onCloseBill, onGoHelp, onGoMen
         <button type="button" className="track-back-button" aria-label="Back to menu" onClick={onGoMenu}>
           <Icon name="arrowLeft" size={26} strokeWidth={2.1} />
         </button>
-        <h2>REORDER</h2>
+        <h2>MY ORDER</h2>
         <span aria-hidden="true" />
       </header>
       <div className="scroll-area track-list" onScroll={handleScroll}>
@@ -34,7 +34,7 @@ export function TrackingPage({ confirm, noOrders, onCloseBill, onGoHelp, onGoMen
           </div>
         ) : null}
         {orders.map((order) => (
-          <article className="order-card card" key={order.id}>
+          <article className={`order-card card ${order.served ? 'served' : ''}`} key={order.id}>
             <div className="order-top">
               <span><em className="overline">Order · {order.time}</em><strong>#{order.number}</strong></span>
               <b>{order.stageLabel}</b>
@@ -45,19 +45,24 @@ export function TrackingPage({ confirm, noOrders, onCloseBill, onGoHelp, onGoMen
             {order.ready ? <p className="ready-text">Ready now - your server is bringing it over.</p> : null}
             {order.served ? (
               <div className="served-actions">
-                <p>Served - enjoy your meal.</p>
-                <Button size="sm" variant="ghost" onClick={order.onReorder}>Order this again</Button>
+                <Button size="sm" variant="ghost" className="reorder-button" onClick={order.onReorder}>
+                  <Icon name="refresh" size={14} /> Order this again
+                </Button>
               </div>
             ) : null}
-            <div className="progress"><span style={{ width: `${order.progressPct}%` }} /></div>
-            <div className="step-list">
-              {order.steps.map((step) => (
-                <div key={step.label} className={step.todo ? 'muted-step' : ''}>
-                  <span className={step.done || step.now ? 'active' : ''}>{step.done ? <Icon name="check" size={12} /> : step.now ? <i /> : step.num}</span>
-                  <strong>{step.label}<small>{step.sub}</small></strong>
+            {!order.served ? (
+              <>
+                <div className="progress"><span style={{ width: `${order.progressPct}%` }} /></div>
+                <div className="step-list">
+                  {order.steps.map((step) => (
+                    <div key={step.label} className={step.todo ? 'muted-step' : ''}>
+                      <span className={step.done || step.now ? 'active' : ''}>{step.done ? <Icon name="check" size={12} /> : step.now ? <i /> : step.num}</span>
+                      <strong>{step.label}<small>{step.sub}</small></strong>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            ) : null}
             <div className="order-lines">
               {order.lines.map((line) => (
                 <p key={line.key}><span>{line.qtyLabel} {line.name}</span><strong>{line.lineTotal}</strong></p>

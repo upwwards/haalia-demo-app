@@ -1,5 +1,73 @@
 @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Righteous&display=swap');
 
+:root {
+  --color-primary: var(--accent);
+  --color-primary-hover: var(--accent-strong);
+  --color-primary-active: var(--accent-strong);
+  --color-primary-soft: var(--active-soft);
+  --color-primary-foreground: var(--on-accent);
+  --color-background: var(--app-background);
+  --color-background-secondary: var(--surface-secondary);
+  --color-background-tertiary: var(--chip-bg);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--icon-bg-hover);
+  --color-surface-active: var(--active-soft);
+  --color-surface-raised: var(--card-bg, var(--surface));
+  --color-surface-inset: var(--control-bg, var(--input-bg));
+  --color-surface-overlay: var(--drawer-bg);
+  --color-text-primary: var(--text);
+  --color-text-secondary: var(--subtle);
+  --color-text-muted: var(--muted);
+  --color-text-disabled: var(--placeholder);
+  --color-text-inverse: var(--on-dark-action);
+  --color-border: var(--border);
+  --color-border-hover: var(--accent);
+  --color-border-strong: var(--border-strong);
+  --color-border-focus: var(--focus);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--danger);
+  --shadow-xs: var(--pill-shadow, none);
+  --shadow-sm: var(--input-shadow, none);
+  --shadow-md: var(--card-shadow, none);
+  --shadow-lg: var(--floating-shadow);
+  --shadow-inset: var(--option-active-shadow, none);
+  --shadow-hard: var(--panel-shadow);
+  --shadow-glow: var(--accent-shadow);
+  --radius-sm: var(--thumb-radius);
+  --radius-md: var(--input-radius);
+  --radius-lg: var(--card-radius);
+  --radius-xl: var(--panel-radius);
+  --radius-pill: 999px;
+  --backdrop-blur: var(--control-filter, none);
+  --backdrop-blur-soft: var(--control-filter, none);
+  --backdrop-blur-strong: var(--settings-sheet-filter, var(--control-filter, none));
+  --transition-fast: 160ms ease;
+  --transition-normal: 260ms ease;
+  --image-scrim: linear-gradient(180deg, color-mix(in srgb, var(--text) 4%, transparent), color-mix(in srgb, var(--text) 18%, transparent));
+  --image-scrim-strong: linear-gradient(180deg, color-mix(in srgb, var(--text) 8%, transparent), color-mix(in srgb, var(--text) 26%, transparent));
+  --compact-header-shadow: 0 10px 20px -18px color-mix(in srgb, var(--text) 38%, transparent);
+  --search-head-shadow: 0 12px 22px -20px color-mix(in srgb, var(--text) 45%, transparent);
+  --detail-back-shadow: 0 10px 22px -16px color-mix(in srgb, var(--text) 45%, transparent);
+  --detail-back-filter: var(--control-filter, none);
+  --detail-hero-shadow: var(--thumb-shadow, var(--card-shadow, none));
+  --detail-hero-overlay: linear-gradient(180deg, color-mix(in srgb, var(--text) 6%, transparent) 0%, color-mix(in srgb, var(--text) 16%, transparent) 52%, color-mix(in srgb, var(--text) 34%, transparent) 100%);
+  --detail-hero-vignette: radial-gradient(circle at 72% 24%, color-mix(in srgb, var(--on-accent) 22%, transparent) 0%, transparent 36%), linear-gradient(90deg, color-mix(in srgb, var(--text) 34%, transparent) 0%, transparent 54%);
+  --detail-action-bg: var(--icon-bg);
+  --detail-action-border: var(--icon-border, var(--control-border, 1px solid var(--border)));
+  --detail-pill-bg: var(--category-bg, var(--chip-bg));
+  --detail-pill-border: var(--category-border, var(--pill-border, 1px solid var(--border-soft)));
+  --detail-pill-shadow: var(--category-shadow, var(--pill-shadow, var(--input-shadow, none)));
+  --topbar-shadow: 0 10px 24px -22px color-mix(in srgb, var(--text) 36%, transparent);
+  --topbar-filter: var(--control-filter, none);
+  --scrim-filter: var(--control-filter, none);
+  --sheet-radius: 30px 30px 0 0;
+  --preview-shadow: 0 3px 8px -3px color-mix(in srgb, var(--text) 28%, transparent);
+  --ar-plate-bg: radial-gradient(circle at 40% 35%, var(--surface) 0%, var(--surface-secondary) 55%, var(--border-strong) 100%);
+  --ar-plate-shadow: inset 0 0 0 14px color-mix(in srgb, var(--color-text-inverse) 55%, transparent), inset 0 0 0 15px color-mix(in srgb, var(--text) 25%, transparent), 0 40px 60px -20px color-mix(in srgb, var(--text) 60%, transparent);
+  --ar-plate-text: color-mix(in srgb, var(--text) 35%, transparent);
+}
+
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -30,7 +98,7 @@ textarea {
 }
 
 button {
-  transition: transform 120ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
+  transition: transform 120ms ease, background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), color var(--transition-fast);
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
@@ -91,6 +159,25 @@ textarea:focus-visible {
   }
   100% {
     opacity: 0;
+  }
+}
+
+@keyframes order-shake {
+  0%,
+  100% {
+    transform: rotate(0deg) translateX(0);
+  }
+  20% {
+    transform: rotate(-9deg) translateX(-1px);
+  }
+  40% {
+    transform: rotate(8deg) translateX(1px);
+  }
+  60% {
+    transform: rotate(-5deg) translateX(-1px);
+  }
+  80% {
+    transform: rotate(4deg) translateX(1px);
   }
 }
 
@@ -196,8 +283,8 @@ textarea:focus-visible {
     color-mix(in srgb, var(--app-background) 72%, transparent) 58%,
     transparent 100%
   );
-  backdrop-filter: blur(18px) saturate(1.18);
-  -webkit-backdrop-filter: blur(18px) saturate(1.18);
+  backdrop-filter: var(--bottom-nav-filter, var(--backdrop-blur-soft));
+  -webkit-backdrop-filter: var(--bottom-nav-filter, var(--backdrop-blur-soft));
   mask-image: linear-gradient(to top, #000 0%, #000 56%, transparent 100%);
   -webkit-mask-image: linear-gradient(to top, #000 0%, #000 56%, transparent 100%);
   z-index: 1;
@@ -415,7 +502,7 @@ textarea:focus-visible {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.18));
+  background: var(--image-scrim);
   pointer-events: none;
 }
 
@@ -558,8 +645,8 @@ textarea:focus-visible {
   background: var(--nav-bg);
   border: var(--nav-border, 1px solid var(--border-soft));
   box-shadow: var(--nav-shadow);
-  backdrop-filter: var(--nav-filter, var(--control-filter, blur(24px) saturate(1.8)));
-  -webkit-backdrop-filter: var(--nav-filter, var(--control-filter, blur(24px) saturate(1.8)));
+  backdrop-filter: var(--nav-filter, var(--backdrop-blur));
+  -webkit-backdrop-filter: var(--nav-filter, var(--backdrop-blur));
 }
 
 .mobile-nav button {
@@ -616,15 +703,23 @@ textarea:focus-visible {
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background: var(--accent);
+  background: var(--success);
   display: inline-block;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 18%, transparent);
 }
 
 .mobile-nav .live-dot {
   position: absolute;
   top: 6px;
   right: 9px;
-  box-shadow: 0 0 0 2px var(--nav-live-ring, var(--bottom-bg, var(--app-background)));
+  box-shadow:
+    0 0 0 2px var(--nav-live-ring, var(--bottom-bg, var(--app-background))),
+    0 0 0 6px color-mix(in srgb, var(--success) 16%, transparent);
+}
+
+.mobile-nav button.has-live > svg {
+  transform-origin: 50% 50%;
+  animation: order-shake 1.7s ease-in-out infinite;
 }
 
 .welcome-screen {
@@ -920,7 +1015,7 @@ textarea:focus-visible {
 
 .phone-shell.menu-chrome-compact .menu-tools {
   padding: 8px 22px 0;
-  box-shadow: 0 10px 20px -18px rgba(35, 28, 20, 0.38);
+  box-shadow: var(--compact-header-shadow);
 }
 
 .phone-shell.menu-chrome-compact .search-box svg {
@@ -1221,6 +1316,57 @@ textarea:focus-visible {
   font-weight: 700;
 }
 
+.title-head {
+  min-height: 54px;
+  padding: 7px 22px 5px;
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  gap: 8px;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+}
+
+.title-head .icon-button {
+  width: 36px;
+  height: 36px;
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.title-head .icon-button:hover {
+  background: var(--active-soft);
+  color: var(--accent-strong);
+}
+
+.title-head > div {
+  min-width: 0;
+  text-align: left;
+}
+
+.title-head h2 {
+  text-align: left;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.title-head p {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .split-head {
   justify-content: space-between;
 }
@@ -1242,7 +1388,7 @@ textarea:focus-visible {
   position: relative;
   z-index: 2;
   background: var(--app-background);
-  box-shadow: var(--search-head-shadow, 0 12px 22px -20px rgba(35, 28, 20, 0.45));
+  box-shadow: var(--search-head-shadow);
 }
 
 .search-head .icon-button {
@@ -1462,8 +1608,9 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: var(--detail-hero-border, 0);
-  box-shadow: var(--thumb-shadow, none);
+  border: var(--detail-hero-border, var(--card-border, 0));
+  box-shadow: var(--detail-hero-shadow);
+  isolation: isolate;
 }
 
 .detail-topbar {
@@ -1476,11 +1623,21 @@ textarea:focus-visible {
 }
 
 .detail-back.icon-button {
-  background: color-mix(in srgb, var(--app-background) 88%, transparent);
-  border-color: color-mix(in srgb, var(--border) 70%, transparent);
-  box-shadow: 0 10px 22px -16px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  width: 46px;
+  height: 46px;
+  background: var(--detail-action-bg);
+  border: var(--detail-action-border);
+  color: var(--text);
+  box-shadow: var(--detail-back-shadow);
+  backdrop-filter: var(--detail-back-filter);
+  -webkit-backdrop-filter: var(--detail-back-filter);
+}
+
+.detail-back.icon-button:hover {
+  background: var(--primary-bg, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 76%, transparent);
+  color: var(--on-accent);
+  box-shadow: var(--accent-shadow);
 }
 
 .image-detail-hero {
@@ -1489,11 +1646,22 @@ textarea:focus-visible {
   background-repeat: no-repeat;
 }
 
+.image-detail-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--detail-hero-vignette);
+  pointer-events: none;
+}
+
 .image-detail-hero::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.26));
+  z-index: 0;
+  background: var(--detail-hero-overlay);
+  pointer-events: none;
 }
 
 .detail-hero > span {
@@ -1508,16 +1676,31 @@ textarea:focus-visible {
 
 .floating-tags {
   position: absolute;
-  top: 58px;
-  left: 12px;
+  top: 14px;
+  right: 14px;
   display: flex;
-  gap: 6px;
+  gap: 7px;
+  max-width: calc(100% - 76px);
+  flex-wrap: wrap;
+  justify-content: flex-end;
   z-index: 1;
 }
 
 .floating-tags .badge {
-  background: var(--app-background);
-  padding: 5px 10px;
+  min-height: 30px;
+  padding: 7px 11px;
+  background: var(--detail-pill-bg);
+  border: var(--detail-pill-border);
+  color: var(--text);
+  box-shadow: var(--detail-pill-shadow);
+  backdrop-filter: var(--detail-back-filter);
+  -webkit-backdrop-filter: var(--detail-back-filter);
+}
+
+.floating-tags .badge-accent {
+  background: var(--primary-bg, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+  color: var(--on-accent);
 }
 
 .ar-button {
@@ -2004,14 +2187,14 @@ textarea:focus-visible {
 .track-topbar.scrolled {
   background: var(--topbar-bg, var(--app-background));
   border-bottom-color: var(--border-soft);
-  box-shadow: 0 10px 24px -22px color-mix(in srgb, var(--text) 36%, transparent);
-  backdrop-filter: var(--control-filter, blur(18px) saturate(1.2));
-  -webkit-backdrop-filter: var(--control-filter, blur(18px) saturate(1.2));
+  box-shadow: var(--topbar-shadow);
+  backdrop-filter: var(--topbar-filter);
+  -webkit-backdrop-filter: var(--topbar-filter);
 }
 
 .track-topbar h2 {
   margin: 0;
-  text-align: center;
+  text-align: left;
   color: var(--text);
   font-size: 18px;
   line-height: 1;
@@ -2034,8 +2217,16 @@ textarea:focus-visible {
 }
 
 .order-card {
+  position: relative;
   padding: 18px;
   margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.order-card.served {
+  background: var(--card-bg, var(--surface));
+  border: var(--card-border, 1px solid var(--border-soft));
+  box-shadow: var(--card-shadow);
 }
 
 .order-top,
@@ -2065,6 +2256,12 @@ textarea:focus-visible {
   font-size: 9px;
 }
 
+.order-card.served .order-top b {
+  color: var(--accent-strong);
+  background: var(--active-soft);
+  box-shadow: none;
+}
+
 .eta {
   display: flex;
   align-items: baseline;
@@ -2084,9 +2281,24 @@ textarea:focus-visible {
 }
 
 .ready-text,
-.served-actions p {
+.served-actions {
   color: var(--success);
   font-weight: 800;
+}
+
+.served-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin: 13px 0 0;
+}
+
+.order-card.served .order-lines {
+  margin-top: 13px;
+  border-top-color: var(--border-soft);
+}
+
+.order-card.served .order-total {
+  color: var(--text);
 }
 
 .progress {
@@ -2244,8 +2456,8 @@ textarea:focus-visible {
   background: color-mix(in srgb, var(--on-accent) 25%, transparent);
   border: 1px solid color-mix(in srgb, var(--on-accent) 55%, transparent);
   color: var(--on-accent);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: var(--service-icon-filter, var(--backdrop-blur-soft));
+  -webkit-backdrop-filter: var(--service-icon-filter, var(--backdrop-blur-soft));
 }
 
 .service-hero-icon span {
@@ -2810,8 +3022,8 @@ textarea:focus-visible {
   width: 230px;
   height: 230px;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #faf4ea 0%, #e8decd 55%, #cdbfa6 100%);
-  box-shadow: inset 0 0 0 14px rgba(255, 255, 255, 0.55), inset 0 0 0 15px rgba(120, 100, 70, 0.25), 0 40px 60px -20px rgba(0, 0, 0, 0.6);
+  background: var(--ar-plate-bg);
+  box-shadow: var(--ar-plate-shadow);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2819,7 +3031,7 @@ textarea:focus-visible {
 }
 
 .plate span {
-  color: rgba(120, 90, 50, 0.35);
+  color: var(--ar-plate-text);
   font-size: 64px;
   font-weight: 800;
 }
@@ -2881,8 +3093,8 @@ textarea:focus-visible {
   right: calc(var(--modal-align-offset, 0) * -1);
   display: none;
   background: color-mix(in srgb, var(--dark-action) 34%, transparent);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: var(--scrim-filter);
+  -webkit-backdrop-filter: var(--scrim-filter);
   opacity: 0;
   pointer-events: none;
   transition: opacity 220ms ease;
@@ -2909,12 +3121,12 @@ textarea:focus-visible {
   box-shadow: var(--drawer-shadow);
   border: var(--settings-sheet-border, var(--nav-border, 1px solid var(--border-soft)));
   border-bottom: 0;
-  border-radius: 30px 30px 0 0;
+  border-radius: var(--sheet-radius);
   transform: translateY(100%);
   transition: transform 260ms ease;
   flex-direction: column;
-  backdrop-filter: var(--settings-sheet-filter, var(--control-filter, blur(30px) saturate(1.8)));
-  -webkit-backdrop-filter: var(--settings-sheet-filter, var(--control-filter, blur(30px) saturate(1.8)));
+  backdrop-filter: var(--backdrop-blur-strong);
+  -webkit-backdrop-filter: var(--backdrop-blur-strong);
 }
 
 .settings-drawer.open {
@@ -2973,7 +3185,7 @@ textarea:focus-visible {
   width: 100%;
   min-height: 58px;
   border: 1.5px solid var(--theme-option-border, var(--border));
-  border-radius: 20px;
+  border-radius: var(--theme-option-radius, 20px);
   background: var(--theme-option-bg, var(--control-bg, var(--input-bg)));
   color: var(--text);
   padding: 10px;
@@ -3013,7 +3225,7 @@ textarea:focus-visible {
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--text) 12%, var(--border));
-  box-shadow: 0 3px 8px -3px color-mix(in srgb, var(--text) 28%, transparent);
+  box-shadow: var(--preview-shadow);
   flex-shrink: 0;
 }
 
@@ -3095,7 +3307,7 @@ textarea:focus-visible {
   }
 
   .phone-shell {
-    --modal-align-offset: 20px;
+    --modal-align-offset: 0px;
   }
 }
 
