@@ -1,22 +1,8 @@
+import { useRef } from 'react';
 import { Badge } from '../components/common/Badge.jsx';
+import { DishThumb } from '../components/common/DishThumb.jsx';
 import { Icon } from '../icons/Icon.jsx';
 import { money, tintByCategory } from '../data/menu.js';
-
-function DishThumb({ item, className = '', children }) {
-  if (item.image) {
-    return (
-      <span className={`thumb image-thumb ${className}`.trim()} style={{ backgroundImage: `url(${item.image})` }}>
-        <span>{item.name[0]}</span>
-      </span>
-    );
-  }
-
-  return (
-    <span className={`thumb ${className}`.trim()} style={{ background: tintByCategory[item.cat] }}>
-      {children || item.name[0]}
-    </span>
-  );
-}
 
 function MenuItem({ item, itemActions }) {
   const qty = itemActions.qtyFor(item.id);
@@ -84,17 +70,29 @@ export function MenuPage({
   items,
   itemActions,
   onCategory,
+  onChromeCompactChange,
   onGoCart,
+  onOpenSearch,
   search,
-  setSearch,
 }) {
+  const compactRef = useRef(false);
+
+  function handleMenuScroll(event) {
+    const compact = event.currentTarget.scrollTop > 28;
+    if (compactRef.current === compact) return;
+    compactRef.current = compact;
+    onChromeCompactChange?.(compact);
+  }
+
   return (
     <section className="screen menu-screen" data-screen="menu">
       <div className="menu-tools">
-        <label className="search-box">
+        <button type="button" className="search-box search-launch" aria-label="Search menu" onClick={onOpenSearch}>
           <Icon name="search" size={16} />
-          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search dishes..." />
-        </label>
+          <span className={search ? 'search-launch-value' : 'search-launch-placeholder'}>
+            {search || 'Search dishes...'}
+          </span>
+        </button>
         <div className="category-scroll" role="tablist" aria-label="Menu categories">
           {categories.map((category) => (
             <button
@@ -110,7 +108,7 @@ export function MenuPage({
           ))}
         </div>
       </div>
-      <div className="scroll-area menu-list">
+      <div className="scroll-area menu-list" onScroll={handleMenuScroll}>
         {hero ? (
           <button type="button" className="hero-dish" onClick={() => itemActions.openItem(hero.id)}>
             <span>

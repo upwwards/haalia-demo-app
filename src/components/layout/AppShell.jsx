@@ -9,6 +9,7 @@ export function AppShell({
   cartCount,
   children,
   hasLive,
+  menuChromeCompact,
   onNavigate,
   onSettings,
   settingsOpen,
@@ -17,12 +18,12 @@ export function AppShell({
   venueName,
 }) {
   const showNav = ['menu', 'track', 'help'].includes(activeScreen);
-  const showFloatingActions = !['menu', 'welcome', 'placed', 'checkout'].includes(activeScreen);
+  const showFloatingActions = !['menu', 'welcome', 'placed', 'checkout', 'search', 'offline'].includes(activeScreen);
 
   return (
     <div className="app-frame">
       <Sidebar active={activeScreen} cartCount={cartCount} hasLive={hasLive} onNavigate={onNavigate} />
-      <main className={`phone-shell ${showFloatingActions ? 'has-floating-actions' : ''} ${showNav ? 'has-bottom-nav' : ''}`.trim()}>
+      <main className={`phone-shell ${showFloatingActions ? 'has-floating-actions' : ''} ${showNav ? 'has-bottom-nav' : ''} ${menuChromeCompact ? 'menu-chrome-compact' : ''}`.trim()}>
         {activeScreen === 'menu' ? (
           <Header
             showNotifications={!showNav}

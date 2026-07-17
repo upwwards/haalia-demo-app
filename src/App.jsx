@@ -7,7 +7,9 @@ import { CartPage } from './pages/CartPage.jsx';
 import { CheckoutPage } from './pages/CheckoutPage.jsx';
 import { ItemDetailPage } from './pages/ItemDetailPage.jsx';
 import { MenuPage } from './pages/MenuPage.jsx';
+import { NoInternetPage } from './pages/NoInternetPage.jsx';
 import { PlacedPage } from './pages/PlacedPage.jsx';
+import { SearchPage } from './pages/SearchPage.jsx';
 import { ServiceRequestPage } from './pages/ServiceRequestPage.jsx';
 import { TrackingPage } from './pages/TrackingPage.jsx';
 import { WelcomePage } from './pages/WelcomePage.jsx';
@@ -56,6 +58,8 @@ function AppContent() {
   const [requests, setRequests] = useState([]);
   const [toast, setToast] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [menuChromeCompact, setMenuChromeCompact] = useState(false);
+  const [isOnline, setIsOnline] = useState(() => typeof navigator === 'undefined' || navigator.onLine);
   const toastTimer = useRef(null);
   const requestCounter = useRef(0);
   const menuInteractionLocked = useRef(false);
@@ -71,6 +75,17 @@ function AppContent() {
       setOrders((current) => current.map((order) => (order.step < 4 ? { ...order, step: order.step + 1 } : order)));
     }, 5200);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const updateOnlineStatus = () => setIsOnline(navigator.onLine);
+    updateOnlineStatus();
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    return () => {
+      window.removeEventListener('online', updateOnlineStatus);
+      window.removeEventListener('offline', updateOnlineStatus);
+    };
   }, []);
 
   useEffect(() => {
@@ -98,9 +113,21 @@ function AppContent() {
   }
 
   function go(nextScreen) {
+    if (nextScreen !== 'menu') setMenuChromeCompact(false);
     setScreen(nextScreen);
     setConfirm(false);
     setShowAR(false);
+  }
+
+  function openSearch() {
+    setMenuChromeCompact(false);
+    setScreen('search');
+  }
+
+  function retryConnection() {
+    const online = navigator.onLine;
+    setIsOnline(online);
+    if (!online) flash('Still offline');
   }
 
   function openItem(id) {
@@ -442,11 +469,14 @@ function AppContent() {
     },
   };
 
+  const activeScreen = isOnline ? screen : 'offline';
+
   return (
     <AppShell
-      activeScreen={screen}
+      activeScreen={activeScreen}
       cartCount={cartCount}
       hasLive={hasLive}
+      menuChromeCompact={isOnline && screen === 'menu' && menuChromeCompact}
       onNavigate={go}
       onSettings={() => setSettingsOpen(true)}
       settingsOpen={settingsOpen}
@@ -454,6 +484,8 @@ function AppContent() {
       tableLabel={tableLabel}
       venueName={venueName}
     >
+      {isOnline ? (
+        <>
       {screen === 'welcome' ? (
         <WelcomePage
           picks={menu.filter((item) => !item.soldOut && (item.tags || []).length).slice(0, 2)}
@@ -475,8 +507,18 @@ function AppContent() {
           itemActions={itemActions}
           onCategory={setCat}
           onGoCart={() => go('cart')}
+          onChromeCompactChange={setMenuChromeCompact}
+          onOpenSearch={openSearch}
           search={search}
-          setSearch={setSearch}
+        />
+      ) : null}
+      {screen === 'search' ? (
+        <SearchPage
+          items={menu}
+          query={search}
+          setQuery={setSearch}
+          onBack={() => go('menu')}
+          onOpenItem={openItem}
         />
       ) : null}
       {screen === 'item' && selectedItem ? (
@@ -542,8 +584,12 @@ function AppContent() {
         onClose={() => setShowAR(false)}
         onPlace={() => flash('AR placement opens on a real device')}
       />
-      {toast ? <div className="toast" role="status">{toast}</div> : null}
       {menuApiFailed ? <div className="api-note" role="status">Using fallback menu</div> : null}
+        </>
+      ) : (
+        <NoInternetPage onRetry={retryConnection} />
+      )}
+      {toast ? <div className="toast" role="status">{toast}</div> : null}
     </AppShell>
   );
 }
