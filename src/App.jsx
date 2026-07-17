@@ -15,7 +15,6 @@ import { TrackingPage } from './pages/TrackingPage.jsx';
 import { WelcomePage } from './pages/WelcomePage.jsx';
 import {
   categories,
-  categoryNames,
   etaByStep,
   itemDetails,
   menuItems,
@@ -526,7 +525,6 @@ function AppContent() {
           item={selectedItem}
           detail={details[selectedItem.id] || {}}
           menuItems={menu}
-          categoryName={categoryNames[selectedItem.cat] || 'Dish'}
           qty={qty}
           setQty={setQty}
           variant={variant}

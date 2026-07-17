@@ -4,7 +4,6 @@ import { Icon } from '../icons/Icon.jsx';
 import { money, tintByCategory } from '../data/menu.js';
 
 export function ItemDetailPage({
-  categoryName,
   detail,
   item,
   menuItems,
@@ -29,15 +28,16 @@ export function ItemDetailPage({
 
   return (
     <section className="screen detail-screen" data-screen="item">
-      <div className="screen-head">
-        <button type="button" className="icon-button" onClick={onBack} aria-label="Back to menu"><Icon name="arrowLeft" /></button>
-        <p className="overline">{categoryName} · {item.veg ? 'Vegetarian' : "Chef's selection"}</p>
-      </div>
       <div className="scroll-area detail-scroll">
         <div
           className={item.image ? 'detail-hero image-detail-hero' : 'detail-hero'}
           style={item.image ? { backgroundImage: `url(${item.image})` } : { background: tintByCategory[item.cat] }}
         >
+          <div className="detail-topbar">
+            <button type="button" className="icon-button detail-back" onClick={onBack} aria-label="Back to menu">
+              <Icon name="arrowLeft" />
+            </button>
+          </div>
           <span>{item.name[0]}</span>
           <div className="floating-tags">
             {tags.includes('chef') ? <Badge tone="accent">Chef's</Badge> : null}

@@ -18,7 +18,7 @@ export function AppShell({
   venueName,
 }) {
   const showNav = ['menu', 'track', 'help'].includes(activeScreen);
-  const showFloatingActions = !['menu', 'welcome', 'placed', 'checkout', 'search', 'offline'].includes(activeScreen);
+  const showFloatingActions = !['menu', 'welcome', 'placed', 'checkout', 'search', 'offline', 'item'].includes(activeScreen);
 
   return (
     <div className="app-frame">
