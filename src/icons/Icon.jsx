@@ -1,3 +1,5 @@
+import colorPaletteIcon from '../assets/color-palette.png';
+
 const paths = {
   arrowRight: ['M4 12h15', 'M13 6l6 6-6 6'],
   arrowLeft: ['M20 12H5', 'M12 19l-7-7 7-7'],
@@ -21,6 +23,21 @@ const paths = {
 };
 
 export function Icon({ name, size = 17, strokeWidth = 2, className = '', color = 'currentColor' }) {
+  if (name === 'paint') {
+    return (
+      <img
+        className={className}
+        width={size}
+        height={size}
+        src={colorPaletteIcon}
+        alt=""
+        aria-hidden="true"
+        draggable="false"
+        style={{ display: 'block', objectFit: 'contain' }}
+      />
+    );
+  }
+
   return (
     <svg
       className={className}

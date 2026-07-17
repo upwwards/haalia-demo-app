@@ -85,10 +85,10 @@
   --control-border: 0;
   --category-bg: #eae3d5;
   --category-border: 0;
-  --category-shadow: 3px 3px 7px #cfc5b0, -3px -3px 7px #fffef5;
+  --category-shadow: 0 8px 14px -10px rgba(88, 70, 42, 0.45), inset 0 1px 0 rgba(255, 254, 245, 0.75);
   --category-active-bg: #eae3d5;
   --category-active-text: #c25022;
-  --category-active-shadow: inset 4px 4px 8px #d6ccb8, inset -4px -4px 8px #fffef5;
+  --category-active-shadow: inset 0 2px 5px rgba(136, 108, 68, 0.22), 0 1px 0 rgba(255, 254, 245, 0.7);
   --option-bg: #eae3d5;
   --option-border: 1.5px solid transparent;
   --option-active-bg: #eae3d5;

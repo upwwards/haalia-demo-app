@@ -2,7 +2,6 @@ import { Header } from './Header.jsx';
 import { MobileNavigation } from './MobileNavigation.jsx';
 import { Sidebar } from './Sidebar.jsx';
 import { SettingsDrawer } from '../settings/SettingsDrawer.jsx';
-import { Avatar } from '../common/Avatar.jsx';
 import { Icon } from '../../icons/Icon.jsx';
 
 export function AppShell({
@@ -25,13 +24,21 @@ export function AppShell({
       <Sidebar active={activeScreen} cartCount={cartCount} hasLive={hasLive} onNavigate={onNavigate} />
       <main className={`phone-shell ${showFloatingActions ? 'has-floating-actions' : ''} ${showNav ? 'has-bottom-nav' : ''}`.trim()}>
         {activeScreen === 'menu' ? (
-          <Header venueName={venueName} tableLabel={tableLabel} onHelp={() => onNavigate('help')} onSettings={onSettings} />
+          <Header
+            showNotifications={!showNav}
+            venueName={venueName}
+            tableLabel={tableLabel}
+            onHelp={() => onNavigate('help')}
+            onSettings={onSettings}
+          />
         ) : null}
         {showFloatingActions ? (
           <div className="floating-header-actions" aria-label="Header actions">
-            <button type="button" className="icon-button" aria-label="Open notifications" title="Notifications" onClick={() => onNavigate('help')}>
-              <Icon name="bell" />
-            </button>
+            {!showNav ? (
+              <button type="button" className="icon-button" aria-label="Open notifications" title="Notifications" onClick={() => onNavigate('help')}>
+                <Icon name="bell" />
+              </button>
+            ) : null}
             <button
               type="button"
               className="icon-button"
@@ -40,13 +47,19 @@ export function AppShell({
               data-testid="settings-button"
               onClick={onSettings}
             >
-              <Icon name="settings" />
+              <Icon name="paint" size={28} />
             </button>
-            <Avatar />
           </div>
         ) : null}
         <div className="screen-stack">{children}</div>
-        {showNav ? <MobileNavigation active={activeScreen} hasLive={hasLive} onNavigate={onNavigate} /> : null}
+        {showNav ? (
+          <div className="bottom-nav-cluster">
+            <MobileNavigation active={activeScreen} hasLive={hasLive} onNavigate={onNavigate} />
+            <button type="button" className="icon-button bottom-notification" aria-label="Open notifications" title="Notifications" onClick={() => onNavigate('help')}>
+              <Icon name="bell" size={20} />
+            </button>
+          </div>
+        ) : null}
       </main>
       <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>

@@ -34,17 +34,7 @@ export function ServiceRequestPage({ onBack, onReqNote, onReqType, onSendReq, re
         <h2>How can we help?</h2>
       </div>
       <div className="scroll-area help-scroll">
-        <div className="service-panel">
-          <div>
-            <span className="service-status"><i aria-hidden="true" /> Floor team online</span>
-            <strong>Request service without waiting.</strong>
-            <small>Pick one thing you need. Add details only when it helps the team respond faster.</small>
-          </div>
-          <span className="service-time">
-            <b>2m</b>
-            <small>avg reply</small>
-          </span>
-        </div>
+   
 
         <div className="section-kicker">
           <span>Service type</span>

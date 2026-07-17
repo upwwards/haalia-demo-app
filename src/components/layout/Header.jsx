@@ -1,7 +1,6 @@
 import { Icon } from '../../icons/Icon.jsx';
-import { Avatar } from '../common/Avatar.jsx';
 
-export function Header({ venueName, tableLabel, onHelp, onSettings }) {
+export function Header({ showNotifications = true, venueName, tableLabel, onHelp, onSettings }) {
   return (
     <header className="app-header">
       <div>
@@ -9,9 +8,11 @@ export function Header({ venueName, tableLabel, onHelp, onSettings }) {
         <h1>Tonight's menu</h1>
       </div>
       <div className="header-actions" aria-label="Header actions">
-        <button type="button" className="icon-button" aria-label="Open notifications" title="Notifications" onClick={onHelp}>
-          <Icon name="bell" />
-        </button>
+        {showNotifications ? (
+          <button type="button" className="icon-button" aria-label="Open notifications" title="Notifications" onClick={onHelp}>
+            <Icon name="bell" />
+          </button>
+        ) : null}
         <button
           type="button"
           className="icon-button"
@@ -20,9 +21,8 @@ export function Header({ venueName, tableLabel, onHelp, onSettings }) {
           data-testid="settings-button"
           onClick={onSettings}
         >
-          <Icon name="settings" />
+          <Icon name="paint" size={28} />
         </button>
-        <Avatar />
       </div>
     </header>
   );
