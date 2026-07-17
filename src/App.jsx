@@ -57,6 +57,8 @@ function AppContent() {
   const [toast, setToast] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const toastTimer = useRef(null);
+  const requestCounter = useRef(0);
+  const menuInteractionLocked = useRef(false);
 
   const menu = useMemo(() => (apiMenuItems.length ? apiMenuItems : menuItems), [apiMenuItems]);
   const details = useMemo(
@@ -75,6 +77,7 @@ function AppContent() {
     const controller = new AbortController();
     fetchMenu({ limit: 20, signal: controller.signal })
       .then((next) => {
+        if (menuInteractionLocked.current) return;
         setApiMenuItems(next.menuItems);
         setApiItemDetails(next.itemDetails);
         setMenuApiFailed(false);
@@ -101,6 +104,7 @@ function AppContent() {
   }
 
   function openItem(id) {
+    menuInteractionLocked.current = true;
     const item = menu.find((entry) => entry.id === id);
     if (!item) return;
     setSelectedId(id);
@@ -115,6 +119,7 @@ function AppContent() {
   }
 
   function addSimple(id) {
+    menuInteractionLocked.current = true;
     const item = menu.find((entry) => entry.id === id);
     if (!item) return;
     const key = `${id}|||`;
@@ -291,7 +296,8 @@ function AppContent() {
       flash('Tell us what you need first');
       return;
     }
-    const id = `r${Date.now()}`;
+    requestCounter.current += 1;
+    const id = `r${requestCounter.current}`;
     const row = {
       id,
       label: requestLabels[reqType],

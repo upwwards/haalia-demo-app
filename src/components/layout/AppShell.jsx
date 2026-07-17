@@ -23,7 +23,7 @@ export function AppShell({
   return (
     <div className="app-frame">
       <Sidebar active={activeScreen} cartCount={cartCount} hasLive={hasLive} onNavigate={onNavigate} />
-      <main className={`phone-shell ${showFloatingActions ? 'has-floating-actions' : ''}`}>
+      <main className={`phone-shell ${showFloatingActions ? 'has-floating-actions' : ''} ${showNav ? 'has-bottom-nav' : ''}`.trim()}>
         {activeScreen === 'menu' ? (
           <Header venueName={venueName} tableLabel={tableLabel} onHelp={() => onNavigate('help')} onSettings={onSettings} />
         ) : null}
