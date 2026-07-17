@@ -769,14 +769,6 @@ textarea:focus-visible {
   justify-content: center;
 }
 
-.welcome-content::before {
-  content: var(--welcome-mark-content, none);
-  width: 156px;
-  height: 78px;
-  margin-bottom: 20px;
-  border-radius: var(--welcome-mark-radius, 0);
-  background: var(--welcome-mark-bg, transparent);
-}
 
 .welcome-content h1 {
   margin: 10px 0 0;
@@ -787,25 +779,9 @@ textarea:focus-visible {
   font-family: var(--headline-family);
 }
 
-.welcome-content h1::after {
-  content: var(--headline-rule-content, none);
-  display: block;
-  width: var(--headline-rule-width, 0);
-  height: var(--headline-rule-height, 0);
-  margin-top: var(--headline-rule-margin, 0);
-  border-radius: 3px;
-  background: var(--headline-rule-bg, transparent);
-}
 
-.app-header h1::after {
-  content: var(--menu-headline-rule-content, var(--headline-rule-content, none));
-  display: block;
-  width: var(--menu-headline-rule-width, var(--headline-rule-width, 0));
-  height: var(--menu-headline-rule-height, var(--headline-rule-height, 0));
-  margin-top: var(--menu-headline-rule-margin, var(--headline-rule-margin, 0));
-  border-radius: 3px;
-  background: var(--menu-headline-rule-bg, var(--headline-rule-bg, transparent));
-}
+
+
 
 .welcome-content h1 span,
 .checkout-screen h2 span {
