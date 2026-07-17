@@ -29,10 +29,13 @@ export function ServiceRequestPage({ onBack, onReqNote, onReqType, onSendReq, re
 
   return (
     <section className="screen help-screen" data-screen="help">
-      <div className="screen-head title-head">
-        <button type="button" className="icon-button" onClick={onBack} aria-label="Back to menu"><Icon name="arrowLeft" /></button>
-        <h2>How can we help?</h2>
-      </div>
+      <header className="track-topbar">
+        <button type="button" className="track-back-button" onClick={onBack} aria-label="Back to menu">
+          <Icon name="arrowLeft" size={26} strokeWidth={2.1} />
+        </button>
+        <h2>HELP</h2>
+        <span aria-hidden="true" />
+      </header>
       <div className="scroll-area help-scroll">
    
 

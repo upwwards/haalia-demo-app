@@ -25,7 +25,7 @@ test.describe('Ember guest app', () => {
     await page.getByRole('button', { name: /Send to the kitchen/i }).click();
     await expect(page.getByRole('heading', { name: 'Order sent' })).toBeVisible();
     await page.getByRole('button', { name: /Track my order/i }).click();
-    await expect(page.getByRole('heading', { name: 'Your orders' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'REORDER' })).toBeVisible();
 
     if (isMobile) {
       await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
@@ -46,16 +46,19 @@ test.describe('Ember guest app', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'ember-2');
   });
 
-  test('theme switching preserves form state and route', async ({ page }) => {
+  test('theme switching preserves search state and route', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: /Call a server/i }).click();
-    await expect(page.getByRole('heading', { name: /How can we help/i })).toBeVisible();
-    await page.getByTestId('request-note').fill('Sparkling water for the table');
+    await page.getByRole('button', { name: /See the full menu/i }).click();
+    await page.getByRole('button', { name: 'Search menu' }).click();
+    await page.getByTestId('search-page-input').fill('chicken');
+    await page.getByRole('button', { name: 'Back to menu' }).click();
+    await expect(page.locator('.search-launch')).toContainText('chicken');
+
     await openSettings(page);
     await page.getByTestId('theme-option-ember-4').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'ember-4');
-    await expect(page.getByRole('heading', { name: /How can we help/i })).toBeVisible();
-    await expect(page.getByTestId('request-note')).toHaveValue('Sparkling water for the table');
+    await expect(page.getByRole('heading', { name: /Tonight's menu/i })).toBeVisible();
+    await expect(page.locator('.search-launch')).toContainText('chicken');
   });
 
   test('menu search opens a dedicated mobile-style search page', async ({ page, isMobile }) => {

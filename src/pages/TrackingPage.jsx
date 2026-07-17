@@ -4,19 +4,26 @@ import { Icon } from '../icons/Icon.jsx';
 export function TrackingPage({ confirm, noOrders, onCloseBill, onGoHelp, onGoMenu, orders }) {
   return (
     <section className="screen track-screen" data-screen="track">
-      <div className="screen-head split-head">
-        <div>
-          <h2>Your orders</h2>
-          <p>Live from the kitchen</p>
-        </div>
-        <span className="live-pill"><span />Live</span>
-      </div>
+      <header className="track-topbar">
+        <button type="button" className="track-back-button" aria-label="Back to menu" onClick={onGoMenu}>
+          <Icon name="arrowLeft" size={26} strokeWidth={2.1} />
+        </button>
+        <h2>REORDER</h2>
+        <span aria-hidden="true" />
+      </header>
       <div className="scroll-area track-list">
         {noOrders ? (
-          <div className="empty-state">
-            <strong>No orders yet</strong>
-            <p>Send an order from the menu to track it here.</p>
-            <Button onClick={onGoMenu}>Browse the menu</Button>
+          <div className="order-empty">
+            <div className="order-empty-visual" aria-hidden="true">
+              <Icon name="receipt" size={34} />
+              <span />
+            </div>
+            <p className="overline">Ready when you are</p>
+            <h3>No active orders</h3>
+            <p>Start from the menu and your kitchen updates will appear here in real time.</p>
+            <div className="order-empty-actions">
+              <Button onClick={onGoMenu}>Browse menu</Button>
+            </div>
           </div>
         ) : null}
         {orders.map((order) => (
