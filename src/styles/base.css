@@ -3345,7 +3345,7 @@ textarea:focus-visible {
 
 .drawer-scrim.open {
   display: block;
-  opacity: 1;
+  opacity: .3;
   pointer-events: auto;
 }
 
