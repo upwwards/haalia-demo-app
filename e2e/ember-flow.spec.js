@@ -8,6 +8,11 @@ async function gotoUnlocked(page) {
   await page.goto('/');
 }
 
+async function gotoUnlockedPath(page, path) {
+  await page.addInitScript(() => localStorage.setItem('ember-pin-unlocked', 'true'));
+  await page.goto(path);
+}
+
 async function openSettings(page) {
   await page.getByTestId('settings-button').click();
   await expect(page.getByTestId('settings-drawer')).toHaveClass(/open/);
@@ -72,6 +77,21 @@ test.describe('Ember guest app', () => {
     await page.evaluate(() => localStorage.setItem('ember-theme', 'not-a-real-theme'));
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-theme', DEFAULT_THEME_ID);
+  });
+
+  test('top-level screens are URL routed', async ({ page }) => {
+    await gotoUnlockedPath(page, '/menu');
+    await expect(page.getByRole('heading', { name: /Tonight's menu/i })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Search menu' }).click();
+    await expect(page).toHaveURL(/\/search$/);
+
+    await page.getByRole('button', { name: 'Back to menu' }).click();
+    await expect(page).toHaveURL(/\/menu$/);
+
+    await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'Help' }).click();
+    await expect(page).toHaveURL(/\/help$/);
+    await expect(page.getByRole('heading', { name: 'How can we help?' })).toBeVisible();
   });
 
   test('theme switching preserves search state and route', async ({ page }) => {

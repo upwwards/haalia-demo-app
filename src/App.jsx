@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { fetchMenu } from './api/menuApi.js';
 import { AppShell } from './components/layout/AppShell.jsx';
@@ -29,6 +30,31 @@ const venueName = 'EMBER';
 const tableLabel = 'Table 12';
 const pinCode = '9048';
 const pinStorageKey = 'ember-pin-unlocked';
+const screenRoutes = {
+  welcome: '/',
+  menu: '/menu',
+  search: '/search',
+  cart: '/cart',
+  placed: '/placed',
+  track: '/orders',
+  help: '/help',
+  checkout: '/checkout',
+};
+
+function routeForScreen(screen, itemId) {
+  if (screen === 'item') return `/item/${encodeURIComponent(itemId || '')}`;
+  return screenRoutes[screen] || screenRoutes.welcome;
+}
+
+function routeFromPath(pathname) {
+  const [, segment, itemId] = pathname.split('/');
+  if (!segment) return { screen: 'welcome', itemId: null };
+  if (segment === 'item') return { screen: 'item', itemId: itemId ? decodeURIComponent(itemId) : null };
+  if (segment === 'orders') return { screen: 'track', itemId: null };
+
+  const match = Object.entries(screenRoutes).find(([, route]) => route === `/${segment}`);
+  return { screen: match?.[0] || 'welcome', itemId: null };
+}
 
 function defaultMods(item) {
   const mods = {};
@@ -39,6 +65,10 @@ function defaultMods(item) {
 }
 
 function AppContent() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const route = useMemo(() => routeFromPath(location.pathname), [location.pathname]);
+  const screen = route.screen;
   const [isUnlocked, setIsUnlocked] = useState(() => {
     if (typeof window === 'undefined') return false;
     return window.localStorage.getItem(pinStorageKey) === 'true';
@@ -47,7 +77,6 @@ function AppContent() {
   const [apiItemDetails, setApiItemDetails] = useState({});
   const [menuLoading, setMenuLoading] = useState(true);
   const [menuApiFailed, setMenuApiFailed] = useState(false);
-  const [screen, setScreen] = useState('welcome');
   const [cat, setCat] = useState('all');
   const [search, setSearch] = useState('');
   const [cart, setCart] = useState([]);
@@ -123,9 +152,9 @@ function AppContent() {
     if (candidate !== pinCode) return false;
     window.localStorage.setItem(pinStorageKey, 'true');
     setIsUnlocked(true);
-    setScreen('welcome');
+    navigate(screenRoutes.welcome, { replace: true });
     return true;
-  }, []);
+  }, [navigate]);
 
   function flash(text) {
     window.clearTimeout(toastTimer.current);
@@ -135,14 +164,14 @@ function AppContent() {
 
   function go(nextScreen) {
     if (nextScreen !== 'menu') setMenuChromeCompact(false);
-    setScreen(nextScreen);
+    navigate(routeForScreen(nextScreen));
     setConfirm(false);
     setShowAR(false);
   }
 
   function openSearch() {
     setMenuChromeCompact(false);
-    setScreen('search');
+    navigate(screenRoutes.search);
   }
 
   function retryConnection() {
@@ -159,7 +188,7 @@ function AppContent() {
     setQty(1);
     setVariant(item.hasVariants ? item.variants[0].id : '');
     setMods(defaultMods(item));
-    setScreen('item');
+    navigate(routeForScreen('item', id));
   }
 
   function qtyFor(id) {
@@ -307,7 +336,7 @@ function AppContent() {
         },
       ];
     });
-    setScreen('menu');
+    navigate(screenRoutes.menu);
     flash(`${amount} x ${item.name} added`);
   }
 
@@ -325,7 +354,7 @@ function AppContent() {
     };
     setOrders((current) => [...current, order]);
     setCart([]);
-    setScreen('placed');
+    navigate(screenRoutes.placed);
     setConfirm(false);
   }
 
@@ -334,7 +363,7 @@ function AppContent() {
       setConfirm(true);
       return;
     }
-    setScreen('checkout');
+    navigate(screenRoutes.checkout);
     setConfirm(false);
   }
 
@@ -378,19 +407,20 @@ function AppContent() {
       });
       return next;
     });
-    setScreen('cart');
+    navigate(screenRoutes.cart);
     flash('Added again - review and send');
   }
 
   function reset() {
-    setScreen('welcome');
+    navigate(screenRoutes.welcome);
     setCart([]);
     setOrders([]);
     setRequests([]);
     setConfirm(false);
   }
 
-  const selectedItem = menu.find((entry) => entry.id === selectedId) || null;
+  const selectedItemId = screen === 'item' ? route.itemId : selectedId;
+  const selectedItem = menu.find((entry) => entry.id === selectedItemId) || null;
   const cartCount = cart.reduce((sum, line) => sum + line.qty, 0);
   const cartTotal = cart.reduce((sum, line) => sum + line.unit * line.qty, 0);
   const hasLive = orders.some((order) => order.step < 4);
@@ -489,6 +519,11 @@ function AppContent() {
       setShowAR(true);
     },
   };
+
+  useEffect(() => {
+    if (screen !== 'item' || menuLoading || selectedItem) return;
+    navigate(screenRoutes.menu, { replace: true });
+  }, [menuLoading, navigate, screen, selectedItem]);
 
   const activeScreen = !isUnlocked ? 'pin' : isOnline ? screen : 'offline';
 
