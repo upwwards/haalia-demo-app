@@ -27,8 +27,17 @@ const child = spawn(playwrightCommand, args, {
   stdio: 'inherit',
 });
 
-child.on('close', async (code) => {
+let finished = false;
+
+async function finish(code, error) {
+  if (finished) return;
+  finished = true;
   let exitCode = code ?? 1;
+
+  if (error) {
+    console.error(error);
+    exitCode = 1;
+  }
 
   try {
     await cleanTestResults();
@@ -38,4 +47,12 @@ child.on('close', async (code) => {
   }
 
   process.exit(exitCode);
+}
+
+child.on('error', (error) => {
+  finish(1, error);
+});
+
+child.on('close', (code) => {
+  finish(code);
 });
